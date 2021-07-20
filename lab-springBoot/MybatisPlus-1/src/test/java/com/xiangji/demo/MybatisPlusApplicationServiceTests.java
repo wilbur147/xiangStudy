@@ -33,7 +33,7 @@ class MybatisPlusApplicationServiceTests {
     @Test
     public void testPage() {
         // 创建Page对象，参数分别对应当前页和每页显示记录数
-        Page<User> page = new Page<>(1,2);
+        Page<User> page = new Page<>(1, 2);
         // 直接调用公共 Service 的page方法，参数分别对应page对象和wrapper条件
         userService.page(page, null);
         // page.getRecords() 当前查询出来的分页数据集合
@@ -50,9 +50,9 @@ class MybatisPlusApplicationServiceTests {
     @Test
     public void testPageWrapper() {
         // 创建Page对象，参数分别对应当前页和每页显示记录数
-        Page<User> page = new Page<>(1,2);
+        Page<User> page = new Page<>(1, 2);
         // 直接调用公共 Service 的page方法，参数分别对应page对象和wrapper条件
-        userService.page(page,new QueryWrapper<User>()
+        userService.page(page, new QueryWrapper<User>()
                 .between("age", 20, 30));
         // page.getRecords() 当前查询出来的分页数据集合
         List<User> userList = page.getRecords();

@@ -5,7 +5,7 @@ import com.xiangji.demo.domain.User;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author Xiangji

@@ -1,0 +1,5 @@
+server:
+  port: 6003
+spring:
+  application:
+    name: Drone

@@ -78,10 +78,10 @@ class MybatisPlusApplicationMapperTests {
     public void testUpdateWrapper() {
         // 查询名字中包含'j'，年龄大于等于18岁及小于等于20岁
         UpdateWrapper<User> wrapper = new UpdateWrapper<User>()
-                .set("email","testUpdateWrapper@baomidou.com")
+                .set("email", "testUpdateWrapper@baomidou.com")
                 .like("name", "j")
                 .ge("age", 18)
                 .le("age", 20);
-        userMapper.update(null,wrapper);
+        userMapper.update(null, wrapper);
     }
 }

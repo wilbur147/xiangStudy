@@ -1,0 +1,84 @@
+kind: pipeline # 定义对象类型，还有secret和signature两种类型
+type: docker # 定义流水线类型，还有kubernetes、exec、ssh等类型
+name: drone-study # 定义流水线名称
+
+steps: # 定义流水线执行步骤，这些步骤将顺序执行
+  - name: package # 1. 流水线名称（maven打包）
+    pull: if-not-exists
+    image: maven:ibmjava-alpine # 定义创建容器的Docker镜像
+    volumes: # 将容器内目录挂载到宿主机，仓库需要开启Trusted设置
+      - name: maven-cache
+        path: /root/.m2 # 将maven下载依赖的目录挂载出来，防止重复下载
+        # 挂载宿主机的目录
+      - name: maven-build
+        path: /app/build/drone-study # 将应用打包好的Jar和执行脚本挂载出来
+    commands: # 定义在Docker容器中执行的shell命令,这里是复制到maven镜像容器里面的，区分开项目就行了
+      - mvn clean package -Dmaven.test.skip=true
+      - cp target/drone.jar /app/build/drone-study/drone.jar
+      - cp Dockerfile /app/build/drone-study/Dockerfile
+      - cp run.sh /app/build/drone-study/run.sh
+      - cp restart.sh /app/build/drone-study/restart.sh
+
+  - name: build-start # 2. 流水线名称（ssh默认人工操作打包好的jar包）
+    image: appleboy/drone-ssh # ssh工具镜像
+    when:
+      branch:
+        include:
+          - master
+        exclude:
+          - dev
+    settings:
+      host: weiye.link # 远程连接地址,可以是IP可以是域名
+      username: root # 远程连接账号
+#      password: 123456 #明文密码
+#      password:
+#        from_secret: ssh_password # 从Secret中读取SSH密码
+      key:
+        from_secret: ssh_key # 从Secret中读取SSH密钥
+      port: 22 # 远程连接端口
+      command_timeout: 10m # 远程执行命令超时时间
+      script_stop: false # 设置为false，遇到第一次错误会继续运行后面的命令
+      script:
+        - cd /www/wwwroot/data/maven/build/drone-study # 进入宿主机构建目录,可根据自己选择目录
+        - chmod +x run.sh # 更改为可执行脚本
+        - ./run.sh # 运行脚本打包应用镜像并运行
+  - name: re-start
+    image: appleboy/drone-ssh
+    when:
+      branch:
+        include:
+          - dev
+        exclude:
+          - master
+    settings:
+      host: weiye.link
+      username: root
+      key:
+        from_secret: ssh_key
+      port: 22
+      command_timeout: 20m
+      script_stop: false
+      script:
+        - cd /www/wwwroot/data/maven/build/drone-study
+        - chmod +x restart.sh # 更改为可执行脚本
+        - ./restart.sh # 重启docker容器
+  - name: notify # 3. 通知（这里使用了钉钉通知，可以使用微信通知、邮件通知等）
+    pull: if-not-exists
+    image: guoxudongdocker/drone-dingtalk:latest
+    settings:
+      token:
+        from_secret: dingtalk_token
+      type: markdown
+      message_color: true
+      message_pic: true
+      sha_link: true
+    when:
+      status: [failure, success]
+
+volumes: # 定义流水线挂载目录，用于共享数据
+  - name: maven-build
+    host:
+      path: /www/wwwroot/data/maven/build/drone-study # 从宿主机中挂载的目录
+  - name: maven-cache
+    host:
+      path: /www/wwwroot/data/maven/cache
