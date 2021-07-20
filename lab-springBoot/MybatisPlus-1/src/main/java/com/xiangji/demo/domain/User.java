@@ -7,7 +7,11 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
+<<<<<<< HEAD
  *  用户
+=======
+ * 用户
+>>>>>>> master
  * </p>
  *
  * @author Xiangji
@@ -15,7 +19,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("tbl_user")
-public class User{
+public class User {
 
     /**
      * 主键ID

@@ -1,4 +1,5 @@
 package com.xiangji.demo.mapper;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xiangji.demo.domain.User;
 import org.apache.ibatis.annotations.Param;
