@@ -1,0 +1,33 @@
+
+
+spring:
+  profiles:
+#    active: dev
+    active: @profiles.active@
+
+
+# UserBean @ConfigurationProperties 写法
+user:
+  lastName: Xiang
+  age: 18
+  list:
+    - 1
+    - 2
+    - 3
+  maps:
+    key1: value1
+    key2: value2
+
+
+
+
+
+
+
+
+# User1Bean @Value 写法
+user1:
+  lastName: Xiang
+  age: 18
+  list: 1,2,3
+  maps: '{"key1":"value1","key2":"value2"}'
