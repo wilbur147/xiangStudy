@@ -6,7 +6,8 @@ logging:
 #    com.xiang.log: trace  # 当前项目工程没有这个包，假设的一个
     com.xiang.learn: trace # com.xiang.learn 包下的级别
   config: classpath:log4j2.xml
-  # 配置了 logback-spring.xml文件 可以注释掉下面配置
+
+  # 配置了 logback-spring.xml或者log4j2.xml文件 可以注释掉下面配置
   file:
 #    path: E:\my-tool\log # 生成指定目录日志文件 （ linux系统 /data/log ）
 #    path: logfile # 生成当前项目根目录日志文件
