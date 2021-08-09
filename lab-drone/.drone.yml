@@ -17,16 +17,15 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
       - cp target/drone.jar /app/build/drone-study/drone.jar
       - cp Dockerfile /app/build/drone-study/Dockerfile
       - cp run.sh /app/build/drone-study/run.sh
-      - cp restart.sh /app/build/drone-study/restart.sh
 
   - name: build-start # 2. 流水线名称（ssh默认人工操作打包好的jar包）
     image: appleboy/drone-ssh # ssh工具镜像
-    when:
-      branch:
-        include:
-          - master
-        exclude:
-          - dev
+#    when:
+#      branch:
+#        include:
+#          - master
+#        exclude:
+#          - dev
     settings:
       host: weiye.link # 远程连接地址,可以是IP可以是域名
       username: root # 远程连接账号
@@ -42,26 +41,26 @@ steps: # 定义流水线执行步骤，这些步骤将顺序执行
         - cd /www/wwwroot/data/maven/build/drone-study # 进入宿主机构建目录,可根据自己选择目录
         - chmod +x run.sh # 更改为可执行脚本
         - ./run.sh # 运行脚本打包应用镜像并运行
-  - name: re-start
-    image: appleboy/drone-ssh
-    when:
-      branch:
-        include:
-          - dev
-        exclude:
-          - master
-    settings:
-      host: weiye.link
-      username: root
-      key:
-        from_secret: ssh_key
-      port: 22
-      command_timeout: 20m
-      script_stop: false
-      script:
-        - cd /www/wwwroot/data/maven/build/drone-study
-        - chmod +x restart.sh # 更改为可执行脚本
-        - ./restart.sh # 重启docker容器
+#  - name: re-start
+#    image: appleboy/drone-ssh
+#    when:
+#      branch:
+#        include:
+#          - dev
+#        exclude:
+#          - master
+#    settings:
+#      host: weiye.link
+#      username: root
+#      key:
+#        from_secret: ssh_key
+#      port: 22
+#      command_timeout: 20m
+#      script_stop: false
+#      script:
+#        - cd /www/wwwroot/data/maven/build/drone-study
+#        - chmod +x restart.sh # 更改为可执行脚本
+#        - ./restart.sh # 重启docker容器
   - name: notify # 3. 通知（这里使用了钉钉通知，可以使用微信通知、邮件通知等）
     pull: if-not-exists
     image: guoxudongdocker/drone-dingtalk:latest
